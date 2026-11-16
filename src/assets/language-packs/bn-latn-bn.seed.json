@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "bn-latn-bn",
+  "version": "0.1.0",
+  "releaseStatus": "seed",
+  "license": null,
+  "provenance": [],
+  "nativeReview": {
+    "status": "pending",
+    "reviewerIds": []
+  },
+  "entries": [
+    { "roman": "ami", "candidates": [{ "text": "আমি", "rank": 1 }] },
+    { "roman": "tumi", "candidates": [{ "text": "তুমি", "rank": 1 }] },
+    { "roman": "apni", "candidates": [{ "text": "আপনি", "rank": 1 }] },
+    { "roman": "amra", "candidates": [{ "text": "আমরা", "rank": 1 }] },
+    { "roman": "amar", "candidates": [{ "text": "আমার", "rank": 1 }] },
+    { "roman": "bangla", "candidates": [{ "text": "বাংলা", "rank": 1 }] },
+    { "roman": "banglay", "candidates": [{ "text": "বাংলায়", "rank": 1 }] },
+    { "roman": "bangladesh", "candidates": [{ "text": "বাংলাদেশ", "rank": 1 }] },
+    { "roman": "bhalo", "candidates": [{ "text": "ভালো", "rank": 1 }] },
+    { "roman": "valo", "candidates": [{ "text": "ভালো", "rank": 1 }] },
+    { "roman": "achi", "candidates": [{ "text": "আছি", "rank": 1 }] },
+    { "roman": "achhi", "candidates": [{ "text": "আছি", "rank": 1 }] },
+    { "roman": "likhi", "candidates": [{ "text": "লিখি", "rank": 1 }] },
+    { "roman": "lekhoni", "candidates": [{ "text": "লেখনী", "rank": 1 }] },
+    { "roman": "dhonnobad", "candidates": [{ "text": "ধন্যবাদ", "rank": 1 }] },
+    { "roman": "bondhu", "candidates": [{ "text": "বন্ধু", "rank": 1 }] },
+    { "roman": "bari", "candidates": [{ "text": "বাড়ি", "rank": 1 }] },
+    { "roman": "kobita", "candidates": [{ "text": "কবিতা", "rank": 1 }] },
+    { "roman": "ami banglay likhi", "candidates": [{ "text": "আমি বাংলায় লিখি", "rank": 1 }] }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "packs": [
+    { "id": "bn-latn-bn", "version": "0.1.0", "file": "bn-latn-bn.seed.json" },
+    { "id": "hi-latn-hi", "version": "0.1.0", "file": "hi-latn-hi.seed.json" }
+  ]
+}

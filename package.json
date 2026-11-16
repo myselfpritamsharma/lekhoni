@@ -1,0 +1,40 @@
+{
+  "name": "lekhoni",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.15.0 <25",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "start": "ng serve",
+    "build": "ng build --configuration production",
+    "test": "ng test --watch=false",
+    "packs:verify": "node scripts/language-packs/verify.mjs"
+  },
+  "dependencies": {
+    "@angular/animations": "^22.0.0",
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@angular/service-worker": "^22.0.0",
+    "dexie": "^4.0.11",
+    "dompurify": "^3.4.17",
+    "fflate": "^0.8.3",
+    "zod": "^4.1.0",
+    "zone.js": "~0.16.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.0.0",
+    "@angular/cli": "^22.0.0",
+    "@angular/compiler-cli": "^22.0.0",
+    "@types/node": "^24.0.0",
+    "typescript": "~6.0.0",
+    "vitest": "^4.0.0",
+    "jsdom": "^27.0.0"
+  }
+}

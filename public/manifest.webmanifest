@@ -1,0 +1,10 @@
+{
+  "name": "Lekhoni",
+  "short_name": "Lekhoni",
+  "description": "A private, offline-first Bengali and Hindi writing workspace.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f4ef",
+  "theme_color": "#176b4d",
+  "lang": "en"
+}

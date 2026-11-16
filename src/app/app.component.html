@@ -1,0 +1,118 @@
+<div class="app-frame" [class.drawer-open]="researchOpen() || proofingOpen() || recoveryOpen()">
+  <aside class="sidebar" aria-label="Writing library">
+    <a class="brand" href="/" aria-label="Lekhoni home"><span class="brand-mark" aria-hidden="true">ল</span><span><b>Lekhoni</b><small>A quiet place to write</small></span></a>
+    <div class="sidebar-heading">Workspaces</div>
+    <nav class="workspace-list" aria-label="Filter workspaces">
+      <button type="button" class="workspace-button" [class.active]="filter() === 'all'" (click)="setFilter('all')"><span aria-hidden="true">⌂</span>All writing<span class="workspace-count">{{ works().filter(w => !w.deletedAt).length }}</span></button>
+      <button type="button" class="workspace-button" [class.active]="filter() === 'book'" (click)="setFilter('book')"><span aria-hidden="true">▤</span>Books</button>
+      <button type="button" class="workspace-button" [class.active]="filter() === 'poem'" (click)="setFilter('poem')"><span aria-hidden="true">✳</span>Poems</button>
+      <button type="button" class="workspace-button" [class.active]="filter() === 'essay'" (click)="setFilter('essay')"><span aria-hidden="true">¶</span>Essays</button>
+      <button type="button" class="workspace-button" [class.active]="filter() === 'academic'" (click)="setFilter('academic')"><span aria-hidden="true">⌑</span>Academic</button>
+      <button type="button" class="workspace-button" [class.active]="filter() === 'trash'" (click)="setFilter('trash')"><span aria-hidden="true">⌫</span>Trash</button>
+    </nav>
+    <div class="library-heading"><span>Documents</span><button class="icon-button" type="button" title="Create a document" aria-label="Create a document" (click)="createWork()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></div>
+    <label class="sr-only" for="library-search">Search writing</label>
+    <input id="library-search" class="library-search" type="search" placeholder="Search writing" [ngModel]="searchQuery()" (ngModelChange)="setSearch($event)">
+    <div class="document-list" aria-label="Documents">
+      @for (work of filteredWorks(); track work.id) {
+        <button type="button" class="document-item" [class.selected]="activeId() === work.id" [class.deleted]="!!work.deletedAt" (click)="selectWork(work)">
+          <span class="document-mark" aria-hidden="true"></span><span class="document-title">{{ work.title }}</span><span class="document-kind">{{ labels[work.kind] }}</span>
+        </button>
+      } @empty {
+        <p class="empty-list">{{ filter() === 'trash' ? 'Trash is empty.' : 'No writing here yet.' }}</p>
+      }
+    </div>
+    <div class="sidebar-footer"><span class="privacy-mark" aria-hidden="true">◈</span><span>Private to this browser. Export a backup to keep it safe.</span></div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <div class="breadcrumb"><span>My writing</span><span aria-hidden="true">/</span><strong>{{ activeWork()?.title || 'Opening library' }}</strong></div>
+      <div class="top-actions">
+        <span class="connection"><i [class.offline]="!isOnline()"></i>{{ isOnline() ? 'Offline ready' : 'Working offline' }}</span>
+        <button class="button quiet" type="button" (click)="copyText()"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>Copy</button>
+        <button class="button primary" type="button" (click)="shareText()"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2M8.6 13.4l6.8 4.2"/></svg>Share</button>
+        <details class="top-menu"><summary class="icon-button" title="More actions" aria-label="More actions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></summary><div class="menu-popover">
+          <label class="menu-item">Import file<input type="file" accept=".txt,.md,.html,.htm,.docx" (change)="importFile($any($event.target).files?.[0]); $any($event.target).value = ''"></label>
+          <button type="button" class="menu-item" (click)="downloadBackup()">Download library backup</button>
+          <label class="menu-item">Restore library<input type="file" accept=".json,application/json" (change)="chooseBackup($any($event.target).files?.[0]); $any($event.target).value = ''"></label>
+          <button type="button" class="menu-item" (click)="exportText('txt')">Export plain text</button>
+          <button type="button" class="menu-item" (click)="exportText('md')">Export Markdown</button>
+          <button type="button" class="menu-item" (click)="exportText('html')">Export HTML</button>
+          <button type="button" class="menu-item" (click)="printDocument()">Print / Save as PDF</button>
+        </div></details>
+      </div>
+    </header>
+
+    @if (loading()) {
+      <div class="loading-state" role="status">{{ saveStatus() }}</div>
+    } @else if (activeWork(); as work) {
+      <div class="work-area">
+        <section class="work-heading">
+          <div class="heading-copy"><div class="eyebrow">{{ labels[work.kind] }} · Private workspace</div>
+            <label class="sr-only" for="work-title">Title</label><input id="work-title" class="title-input" [ngModel]="titleDraft" (ngModelChange)="setTitle($event)" maxlength="120" aria-label="Writing title">
+          </div>
+          <span class="save-state" [class.error]="saveStatus().includes('failed')" role="status" aria-live="polite">{{ saveStatus() }}</span>
+        </section>
+
+        @if (work.kind === 'book') {
+          <section class="chapter-strip" aria-label="Book chapters"><div class="chapter-tabs">
+            @for (chapter of work.chapters ?? []; track chapter.id) {
+              <button type="button" class="chapter-tab" [class.active]="chapterId() === chapter.id" (click)="selectChapter(chapter)"><input [value]="chapter.title" (click)="$event.stopPropagation()" (change)="updateChapterTitle(chapter, $any($event.target).value)" aria-label="Chapter title"></button>
+            }
+            <button type="button" class="chapter-add" (click)="addChapter()" title="Add chapter" aria-label="Add chapter">+</button>
+          </div><div class="chapter-order">@if (activeChapter(); as chapter) {<button class="icon-button" type="button" (click)="moveChapter(chapter, -1)" title="Move chapter earlier" aria-label="Move chapter earlier">↑</button><button class="icon-button" type="button" (click)="moveChapter(chapter, 1)" title="Move chapter later" aria-label="Move chapter later">↓</button>}</div></section>
+        }
+
+        @if (work.kind === 'academic') {
+          <section class="academic-meta"><label for="academic-template">Template</label><select id="academic-template" [ngModel]="work.academicTemplate || 'paper'" (ngModelChange)="setAcademicTemplate($event)"><option value="assignment">Assignment</option><option value="paper">Research paper</option><option value="thesis-dissertation">Thesis / dissertation</option><option value="research-note">Research note</option><option value="report">Report</option></select><button class="button quiet" type="button" (click)="researchOpen.set(!researchOpen())">Sources & notes <span class="count-pill">{{ sources().length }}</span></button></section>
+        }
+
+        <section class="composer-panel" aria-labelledby="composer-title">
+          <div class="composer-top"><div><strong id="composer-title">Roman composer</strong><span>Choose a script, type, then select a candidate.</span></div><div class="language-switch" role="group" aria-label="Writing language">
+            <button type="button" [class.active]="work.language === 'bn'" [attr.aria-pressed]="work.language === 'bn'" (click)="setLanguage('bn')">বাংলা</button>
+            <button type="button" [class.active]="work.language === 'hi'" [attr.aria-pressed]="work.language === 'hi'" (click)="setLanguage('hi')">हिन्दी</button>
+            <button type="button" [class.active]="work.language === 'native'" [attr.aria-pressed]="work.language === 'native'" (click)="setLanguage('native')">Native</button>
+          </div></div>
+          @if (work.language !== 'native') {
+            <div class="composer-entry"><label class="sr-only" for="roman-input">Type Bengali or Hindi using Roman letters</label><input id="roman-input" [ngModel]="romanDraft" (ngModelChange)="onRomanChange($event)" (keydown)="composerKeydown($event)" [placeholder]="work.language === 'hi' ? 'Try: main hindi mein likhta hoon' : 'Try: ami banglay likhi'"><button class="button primary" type="button" [disabled]="!candidates.length" (click)="candidates.length && insertCandidate(candidates[selectedCandidateIndex] || candidates[0])">Insert at cursor ↵</button></div>
+            <div class="candidate-list" role="group" aria-label="Composition candidates">
+              @for (candidate of candidates; track candidate.id; let index = $index) {<div class="candidate-row"><button #candidateButton class="candidate" type="button" [class.selected]="selectedCandidateIndex === index" [attr.aria-current]="selectedCandidateIndex === index ? 'true' : null" (keydown)="candidateKeydown($event, index)" (click)="insertCandidate(candidate)"><span>{{ candidate.text }}</span><small>{{ candidate.label }}</small></button>@if (candidate.label !== 'Keep Roman') {<button class="candidate-save" type="button" title="Save as your correction" [attr.aria-label]="'Save ' + candidate.text + ' as your correction'" (click)="saveCorrection(candidate)">Save</button>}</div>}
+            </div>
+          } @else {<p class="native-hint">Native mode keeps the composer inactive. Type directly in the editor.</p>}
+          <p class="composer-footnote">Starter phrases are unreviewed. Check each suggestion; the phonetic fallback is not a full language engine.</p>
+        </section>
+
+        <div class="editor-tools-row"><span class="script-badge">{{ work.language === 'bn' ? 'BENGALI · UNICODE' : work.language === 'hi' ? 'HINDI · UNICODE' : 'NATIVE TEXT' }}</span><button class="tool-text" type="button" [disabled]="!canUndoComposition" (click)="undoComposition()">Undo commit</button><button class="tool-text" type="button" [disabled]="!canRedoComposition" (click)="redoComposition()">Redo commit</button><span class="tools-spacer"></span><button class="tool-text" type="button" (click)="replaceOpen.set(!replaceOpen())">Find & replace</button><button class="tool-text" type="button" (click)="proofingOpen.set(!proofingOpen())">Writing checks <span class="count-pill">{{ findings.length }}</span></button><button class="tool-text" type="button" (click)="showRecovery()">Recovery</button></div>
+        @if (replaceOpen()) {<section class="replace-bar"><input aria-label="Find text" placeholder="Find" [(ngModel)]="searchText"><input aria-label="Replace with" placeholder="Replace with" [(ngModel)]="replaceText"><button class="button" type="button" (click)="replaceAll()">Replace all</button></section>}
+        <section class="editor-panel" aria-label="Writing editor"><label class="sr-only" for="editor">Write your document</label><textarea #editor id="editor" [ngModel]="editorText" (ngModelChange)="onTextChange($event)" (keydown)="editorKeydown($event)" [lang]="work.language === 'bn' ? 'bn' : work.language === 'hi' ? 'hi' : 'und'" spellcheck="false" placeholder="Your words, in your script…"></textarea><footer class="editor-footer"><span>Native Unicode · NFC</span><div><span>{{ wordCount }} words</span><span>{{ characterCount }} characters</span><span>{{ readingMinutes }} min read</span></div></footer></section>
+        <div class="document-actions"><button class="button quiet" type="button" (click)="duplicateWork()">Duplicate</button>@if (work.deletedAt) {<button class="button primary" type="button" (click)="restoreWork()">Restore from trash</button>} @else {<button class="button danger" type="button" (click)="moveToTrash()">Move to trash</button>}</div>
+      </div>
+    }
+  </main>
+
+  @if (researchOpen()) {
+    <aside class="drawer" aria-label="Research workspace"><header><div><div class="eyebrow">Academic workspace</div><h2>Sources & notes</h2></div><button class="icon-button" type="button" aria-label="Close research" (click)="researchOpen.set(false)">×</button></header>
+      <form class="source-form" (submit)="$event.preventDefault(); addSource()"><h3>Add a source</h3><label>Title<input name="sourceTitle" [(ngModel)]="sourceTitle" required maxlength="500"></label><label>Author(s)<input name="sourceAuthors" [(ngModel)]="sourceAuthors" maxlength="500"></label><div class="form-row"><label>Year<input name="sourceYear" [(ngModel)]="sourceYear" maxlength="40"></label><label>DOI<input name="sourceDoi" [(ngModel)]="sourceDoi" maxlength="300"></label></div><label>URL<input name="sourceUrl" [(ngModel)]="sourceUrl" type="url" maxlength="2000"></label><button class="button primary" type="submit">Save source</button></form>
+      <div class="source-list"><h3>Local source library</h3>@for (source of sources(); track source.id) {<article class="source-item"><strong>{{ source.title }}</strong><p>{{ source.authors || 'Author not added' }}{{ source.year ? ' · ' + source.year : '' }}</p><small>{{ source.verificationStatus }} · {{ source.doi || source.url || 'No identifier' }}</small><button class="button quiet" type="button" (click)="insertCitation(source)">Insert marker</button></article>} @empty {<p class="empty-state">No sources saved yet.</p>}</div>
+      <form class="note-form" (submit)="$event.preventDefault(); addNote()"><h3>Research note</h3><label>Kind<select name="noteKind" [(ngModel)]="noteKind"><option value="idea">Idea</option><option value="quote">Quote</option><option value="paraphrase">Paraphrase</option><option value="summary">Summary</option></select></label><label>Note<textarea name="noteText" [(ngModel)]="noteText" rows="3"></textarea></label><button class="button" type="submit">Save note</button></form>
+      <div class="note-list">@for (note of notes(); track note.id) {<article class="note-item"><small>{{ note.kind }}</small><p>{{ note.text }}</p></article>}</div>
+      <p class="honesty-note">Citation markers are basic author-date placeholders. Verify source details and format references before publication. Online metadata search is not enabled.</p>
+    </aside>
+  }
+
+  @if (proofingOpen()) {
+    <aside class="drawer" aria-label="Writing checks"><header><div><div class="eyebrow">On-device checks</div><h2>Writing checks</h2></div><button class="icon-button" type="button" aria-label="Close writing checks" (click)="proofingOpen.set(false)">×</button></header><p class="honesty-note">These checks cover repeated spaces, adjacent repeated words, and control characters only. They are not grammar or spelling advice.</p>
+      @for (finding of findings; track finding.id) {<article class="finding"><span class="finding-type">{{ finding.category }}</span><strong>{{ finding.message }}</strong><p>“{{ finding.original }}”</p>@if (finding.replacement) {<button class="button" type="button" (click)="applyFinding(finding)">Replace with “{{ finding.replacement }}”</button>}</article>} @empty {<p class="empty-state">No supported issues found.</p>}
+    </aside>
+  }
+
+  @if (recoveryOpen()) {
+    <div class="modal-backdrop" role="presentation"><section class="modal" role="dialog" aria-modal="true" aria-labelledby="recovery-title"><header><div><div class="eyebrow">Local recovery</div><h2 id="recovery-title">Recent snapshots</h2></div><button class="icon-button" type="button" aria-label="Close recovery" (click)="recoveryOpen.set(false)">×</button></header>@for (snapshot of snapshots(); track snapshot.id) {<article class="snapshot"><div><strong>{{ snapshot.title }}</strong><small>{{ snapshot.createdAt | date:'medium' }}</small><p>{{ snapshot.text | slice:0:160 }}{{ snapshot.text.length > 160 ? '…' : '' }}</p></div><button class="button" type="button" (click)="restoreSnapshot(snapshot.id)">Restore</button></article>} @empty {<p class="empty-state">No earlier snapshots are available.</p>}</section></div>
+  }
+
+  @if (restoreOpen()) {
+    <div class="modal-backdrop" role="presentation"><section class="modal confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="restore-title"><div class="eyebrow">Library backup</div><h2 id="restore-title">Replace this browser library?</h2><p>The selected file will replace the writing saved in this browser. Invalid files are rejected without changing your library.</p><div class="modal-actions"><button class="button quiet" type="button" (click)="cancelRestore()">Cancel</button><button class="button primary" type="button" (click)="confirmRestore()">Replace library</button></div></section></div>
+  }
+  @if (toastMessage()) {<div class="toast" role="status" aria-live="polite">{{ toastMessage() }}</div>}
+</div>

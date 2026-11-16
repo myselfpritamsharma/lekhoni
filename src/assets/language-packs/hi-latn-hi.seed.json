@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "hi-latn-hi",
+  "version": "0.1.0",
+  "releaseStatus": "seed",
+  "license": null,
+  "provenance": [],
+  "nativeReview": {
+    "status": "pending",
+    "reviewerIds": []
+  },
+  "entries": [
+    { "roman": "main", "candidates": [{ "text": "मैं", "rank": 1 }] },
+    { "roman": "mai", "candidates": [{ "text": "मैं", "rank": 1 }] },
+    { "roman": "tum", "candidates": [{ "text": "तुम", "rank": 1 }] },
+    { "roman": "aap", "candidates": [{ "text": "आप", "rank": 1 }] },
+    { "roman": "hum", "candidates": [{ "text": "हम", "rank": 1 }] },
+    { "roman": "hindi", "candidates": [{ "text": "हिंदी", "rank": 1 }] },
+    { "roman": "bharat", "candidates": [{ "text": "भारत", "rank": 1 }] },
+    { "roman": "namaste", "candidates": [{ "text": "नमस्ते", "rank": 1 }] },
+    { "roman": "accha", "candidates": [{ "text": "अच्छा", "rank": 1 }] },
+    { "roman": "achha", "candidates": [{ "text": "अच्छा", "rank": 1 }] },
+    { "roman": "hai", "candidates": [{ "text": "है", "rank": 1 }] },
+    { "roman": "hain", "candidates": [{ "text": "हैं", "rank": 1 }] },
+    { "roman": "hoon", "candidates": [{ "text": "हूँ", "rank": 1 }] },
+    { "roman": "likhta", "candidates": [{ "text": "लिखता", "rank": 1 }] },
+    { "roman": "likhti", "candidates": [{ "text": "लिखती", "rank": 1 }] },
+    { "roman": "bhasha", "candidates": [{ "text": "भाषा", "rank": 1 }] },
+    { "roman": "dhanyavaad", "candidates": [{ "text": "धन्यवाद", "rank": 1 }] },
+    { "roman": "dost", "candidates": [{ "text": "दोस्त", "rank": 1 }] },
+    { "roman": "ghar", "candidates": [{ "text": "घर", "rank": 1 }] },
+    { "roman": "main hindi mein likhta hoon", "candidates": [{ "text": "मैं हिंदी में लिखता हूँ", "rank": 1 }] }
+  ]
+}
